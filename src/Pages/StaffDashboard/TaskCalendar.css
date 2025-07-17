@@ -1,0 +1,299 @@
+/* Tsssk-Secc */
+
+.Tsssk-Secc{
+    position: relative;
+    width: 100%;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.Tsssk-Box{
+    position: relative;
+    width: 100%;
+    height: auto;
+    
+}
+
+.Tsssk-Box-Header{
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 20px;
+    border-bottom: 1px solid #f0ecfb;
+}
+
+.Tsssk-Box-Main{
+    position: relative;
+    width: 100%;
+    height: auto;
+
+}
+
+.OOlik-HHt2{
+    position: relative;
+    font-size: 15px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+     line-height: 100%;
+}
+
+.OOlik-HHt2 span{
+    font-size: 10px;
+    font-weight: 400 !important;
+    background-color: #fef2ff;
+    padding: 3px 8px;
+    border: 1px solid #f173fc;
+    border-radius: 30px;
+    line-height: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.tsk-header-wrap {
+  display: grid;
+  grid-template-columns: 80px repeat(3, 1fr);
+  border-bottom: 1px solid #f0ecfb;
+}
+.tsk-header-cell {
+  text-align: center;
+  padding: 8px 4px;
+  border-left: 1px solid #f0ecfb;
+}
+.tsk-header-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.tsk-header-range {
+  font-size: 10px;
+  display: block;
+  text-transform: uppercase;
+  color: #555;
+}
+
+.tsk-main-grid {
+  display: flex;
+  min-width: 640px;
+}
+.tsk-time-col {
+  width: 80px;
+}
+.tsk-time-label {
+  height: 64px; /* DESK_ROW = 64 */
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #555;
+  text-align: right;
+  padding-right: 6px;
+  border-bottom: 1px solid #f0ecfb;
+}
+.tsk-shift-col {
+  flex: 1;
+  border-left: 1px solid #f0ecfb;
+  position: relative;
+}
+.tsk-time-slot {
+  height: 64px; /* DESK_ROW = 64 */
+  border-bottom: 1px solid #f0ecfb;
+  pointer-events:none;  
+}
+.tsk-event {
+  border-left: 4px solid;
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 0.74rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+  background-clip: padding-box;
+  box-sizing: border-box;
+   pointer-events:auto;
+   z-index: 5;
+}
+.Tahah-Dells-Top h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.Tahah-Dells-Top p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #555;
+}
+.Tahah-Dells-Main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+@media (max-width: 767px) {
+  .tsk-header-wrap {
+    grid-template-columns: 60px repeat(3, 1fr);
+  }
+  .tsk-time-col,
+  .dummy {
+    width: 60px;
+  }
+  .tsk-time-label {
+    height: 48px; /* TAB_ROW = 48 */
+    font-size: 0.7rem;
+  }
+  .tsk-time-slot {
+    height: 48px; /* TAB_ROW = 48 */
+  }
+}
+@media (max-width: 599px) {
+  .tsk-header-wrap {
+    grid-template-columns: 50px repeat(3, 1fr);
+  }
+  .tsk-header-range {
+    display: none;
+  }
+  .tsk-time-col,
+  .dummy {
+    width: 50px;
+  }
+  .tsk-time-label {
+    height: 40px; /* MOB_ROW = 40 */
+    font-size: 0.65rem;
+  }
+  .tsk-time-slot {
+    height: 40px; /* MOB_ROW = 40 */
+  }
+  .tsk-time-label[data-hour]:not([data-hour="6"]):not([data-hour="8"]):not([data-hour="10"]):not([data-hour="12"]):not([data-hour="14"]):not([data-hour="16"]):not([data-hour="18"]):not([data-hour="20"]):not([data-hour="22"]) {
+    color: transparent;
+  }
+}
+
+/* overlay + modal */
+.tsk-modal-overlay{
+  position:fixed;inset:0;background:#0008;display:flex;align-items:center;
+  justify-content:center;z-index:1000;
+}
+.tsk-modal{
+  background:#fff;padding:24px 32px;border-radius:12px;max-width:420px;width:90%;
+  box-shadow:0 6px 24px rgba(0,0,0,.18);position:relative;
+}
+.tsk-modal-close{
+  position:absolute;top:10px;right:14px;font-size:24px;background:none;border:none;cursor:pointer;
+}
+.tsk-modal-details{margin:16px 0 0;padding:0;list-style:none;}
+.tsk-modal-details li{margin:6px 0;font-size:15px;}
+/* TaskCalendar.css – add near your grid styles */
+
+
+
+
+/* Tahah-Dells */
+
+.Tahah-Dells{
+  position: relative;
+  width: 100%;
+}
+
+
+.Tahah-Dells-Top{
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+
+.Tahah-Dells-Top h3{
+   font-size: 11px;
+  font-weight:600;
+    display: -webkit-box;
+  -webkit-line-clamp:1; 
+  line-clamp:1; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.Tahah-Dells-Top p{
+   font-size: 10px;
+    display: -webkit-box;
+  -webkit-line-clamp:1; 
+  line-clamp:1; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.Tahah-Dells-Main{
+  position: relative;
+  width: 100%;
+  height: auto;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+
+.CLllka-1{
+  position: relative;
+  width: auto;
+  height: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.CLllka-1 img ,
+.CLllka-1 span{
+  background-color: #888;
+  color: white;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 600;
+  user-select: none;
+  object-fit: cover;
+  object-position: center;
+}
+
+
+.CLllka-2{
+  position: relative;
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+}
+
+.CLllka-2 p{
+     font-size: 12px;
+    display: -webkit-box;
+  -webkit-line-clamp:1; 
+  line-clamp:1; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #555;
+}
+
+
+
+
+
+
