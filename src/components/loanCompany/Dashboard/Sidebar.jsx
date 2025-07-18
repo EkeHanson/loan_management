@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
 import { Dashboard as DashboardIcon, People as PeopleIcon, MonetizationOn as MonetizationIcon } from '@mui/icons-material';
 import './Dashboard.css';
 
-const Sidebar = () => {
+const Sidebar = ({ setActiveSection, activeSection }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const menuItems = [
-    { name: 'Dashboard', path: '/company/admin', icon: DashboardIcon },
-    { name: 'Investors', path: '/company/admin/investors', icon: PeopleIcon },
-    { name: 'Investments', path: '/company/admin/investments', icon: MonetizationIcon },
+    { name: 'Dashboard', section: 'dashboard', icon: DashboardIcon },
+    { name: 'Investors', section: 'investors', icon: PeopleIcon },
+    { name: 'Investments', section: 'investments', icon: MonetizationIcon },
   ];
+
+  const handleMenuClick = (section) => {
+    setActiveSection(section);
+    window.history.pushState({}, '', `/company/admin/${section === 'dashboard' ? '' : section}`);
+  };
 
   return (
     <nav className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
@@ -18,11 +22,14 @@ const Sidebar = () => {
       </button>
       <ul>
         {menuItems.map(item => (
-          <li key={item.path}>
-            <NavLink to={item.path} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+          <li key={item.section}>
+            <button
+              className={`nav-link ${activeSection === item.section ? 'active' : ''}`}
+              onClick={() => handleMenuClick(item.section)}
+            >
               <item.icon className="nav-icon" />
               {!isCollapsed && <span>{item.name}</span>}
-            </NavLink>
+            </button>
           </li>
         ))}
       </ul>
@@ -31,4 +38,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-

@@ -17,18 +17,18 @@ export const DashboardProvider = ({ children }) => {
 
   useEffect(() => {
     setInvestorsData([
-      { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active', kycStatus: 'Pending' },
-      { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'Pending', kycStatus: 'Pending' },
+      { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active', kycStatus: 'Pending', createdAt: new Date('2025-07-01') },
+      { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'Pending', kycStatus: 'Pending', createdAt: new Date('2025-06-15') },
     ]);
 
     setInvestmentsData([
-      { id: 1, planName: 'Fixed 12%', amount: 5000, startDate: '2025-06-01', status: 'Active' },
-      { id: 2, planName: 'Flexible 3.3%', amount: 3000, startDate: '2025-07-01', status: 'Pending' },
+      { id: 1, planName: 'Fixed 12%', amount: 5000, startDate: new Date('2025-06-01'), status: 'Active', investorId: 1, investorName: 'John Doe' },
+      { id: 2, planName: 'Flexible 3.3%', amount: 3000, startDate: new Date('2025-07-01'), status: 'Pending', investorId: 2, investorName: 'Jane Smith' },
     ]);
 
     setRoiLogs([
-      { id: 1, investmentId: 1, amount: 60, date: '2025-07-01', status: 'Paid' },
-      { id: 2, investmentId: 1, amount: 60, date: '2025-07-15', status: 'Pending' },
+      { id: 1, investmentId: 1, amount: 60, date: new Date('2025-07-01'), status: 'Paid' },
+      { id: 2, investmentId: 1, amount: 60, date: new Date('2025-07-15'), status: 'Pending' },
     ]);
 
     const interval = setInterval(() => {

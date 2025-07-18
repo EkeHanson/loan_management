@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
-import DashboardContext from './DashboardContext';
+import { DashboardContext } from './DashboardContext';
 import InvestorManagement from './InvestorManagement';
 import InvestmentManagement from './InvestmentManagement';
+import { People as PeopleIcon, MonetizationOn as MonetizationOnIcon, HourglassEmpty as HourglassEmptyIcon } from '@mui/icons-material';
 import './Dashboard.css';
 
 const DashboardContent = ({ activeSection }) => {
@@ -18,17 +19,101 @@ const DashboardContent = ({ activeSection }) => {
       case 'dashboard':
         return (
           <div className="overview-cards">
-            <div className="card">
-              <h3>Total Investors</h3>
-              <p>{overviewData.totalInvestors}</p>
+            <div className="infographic-card">
+              <div className="infographic-header">
+                <PeopleIcon className="infographic-icon" />
+                <h3>Total Investors</h3>
+              </div>
+              <div className="infographic-value">{overviewData.totalInvestors}</div>
+              <div className="infographic-progress">
+                <svg className="progress-ring" width="80" height="80">
+                  <circle
+                    className="progress-ring__background"
+                    cx="40"
+                    cy="40"
+                    r="36"
+                    stroke="#EDE9FE"
+                    strokeWidth="8"
+                    fill="none"
+                  />
+                  <circle
+                    className="progress-ring__progress"
+                    cx="40"
+                    cy="40"
+                    r="36"
+                    stroke="#6B21A8"
+                    strokeWidth="8"
+                    fill="none"
+                    strokeDasharray="226.2"
+                    strokeDashoffset={226.2 * (1 - overviewData.totalInvestors / 200)} // Assuming max 200 investors
+                  />
+                </svg>
+                <span className="progress-label">{((overviewData.totalInvestors / 200) * 100).toFixed(0)}% of target</span>
+              </div>
             </div>
-            <div className="card">
-              <h3>Active Investments</h3>
-              <p>{overviewData.activeInvestments}</p>
+            <div className="infographic-card">
+              <div className="infographic-header">
+                <MonetizationOnIcon className="infographic-icon" />
+                <h3>Active Investments</h3>
+              </div>
+              <div className="infographic-value">{overviewData.activeInvestments}</div>
+              <div className="infographic-progress">
+                <svg className="progress-ring" width="80" height="80">
+                  <circle
+                    className="progress-ring__background"
+                    cx="40"
+                    cy="40"
+                    r="36"
+                    stroke="#EDE9FE"
+                    strokeWidth="8"
+                    fill="none"
+                  />
+                  <circle
+                    className="progress-ring__progress"
+                    cx="40"
+                    cy="40"
+                    r="36"
+                    stroke="#A855F7"
+                    strokeWidth="8"
+                    fill="none"
+                    strokeDasharray="226.2"
+                    strokeDashoffset={226.2 * (1 - overviewData.activeInvestments / 150)} // Assuming max 150 investments
+                  />
+                </svg>
+                <span className="progress-label">{((overviewData.activeInvestments / 150) * 100).toFixed(0)}% of target</span>
+              </div>
             </div>
-            <div className="card">
-              <h3>Pending Withdrawals</h3>
-              <p>{overviewData.pendingWithdrawals}</p>
+            <div className="infographic-card">
+              <div className="infographic-header">
+                <HourglassEmptyIcon className="infographic-icon" />
+                <h3>Pending Withdrawals</h3>
+              </div>
+              <div className="infographic-value">{overviewData.pendingWithdrawals}</div>
+              <div className="infographic-progress">
+                <svg className="progress-ring" width="80" height="80">
+                  <circle
+                    className="progress-ring__background"
+                    cx="40"
+                    cy="40"
+                    r="36"
+                    stroke="#EDE9FE"
+                    strokeWidth="8"
+                    fill="none"
+                  />
+                  <circle
+                    className="progress-ring__progress"
+                    cx="40"
+                    cy="40"
+                    r="36"
+                    stroke="#EF4444"
+                    strokeWidth="8"
+                    fill="none"
+                    strokeDasharray="226.2"
+                    strokeDashoffset={226.2 * (1 - overviewData.pendingWithdrawals / 50)} // Assuming max 50 withdrawals
+                  />
+                </svg>
+                <span className="progress-label">{((overviewData.pendingWithdrawals / 50) * 100).toFixed(0)}% of max</span>
+              </div>
             </div>
           </div>
         );
@@ -70,4 +155,3 @@ const DashboardContent = ({ activeSection }) => {
 };
 
 export default DashboardContent;
-

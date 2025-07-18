@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Tooltip } from '@mui/material';
 import {
   Add as AddIcon,
@@ -11,11 +11,12 @@ import {
 } from '@mui/icons-material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import './Dashboard.css';
+import { DashboardContext } from './DashboardContext';
 import InvestorProfile from './InvestorProfile';
+import './Dashboard.css';
 
 const InvestorManagement = () => {
-  const [investors, setInvestors] = useState([]);
+  const { investorsData, setInvestorsData } = useContext(DashboardContext);
   const [filters, setFilters] = useState({ search: '', status: 'all', dateFrom: null, dateTo: null });
   const [selectedInvestors, setSelectedInvestors] = useState([]);
   const [showUpload, setShowUpload] = useState(false);
@@ -27,74 +28,146 @@ const InvestorManagement = () => {
   const [selectedInvestor, setSelectedInvestor] = useState(null);
 
   useEffect(() => {
-    setInvestors([
-      {
-        id: 1,
-        name: 'John Doe',
-        email: 'john@example.com',
-        status: 'active',
-        createdAt: new Date('2025-07-01'),
-        phone: '+1234567890',
-        kycStatus: 'verified',
-        totalInvested: 10000,
-        roiEarned: 500,
-        walletBalance: 300,
-        referredBy: 'jane@example.com'
-      },
-      {
-        id: 2,
-        name: 'Jane Smith',
-        email: 'jane@example.com',
-        status: 'pending',
-        createdAt: new Date('2025-06-15'),
-        phone: '+1987654321',
-        kycStatus: 'pending',
-        totalInvested: 20000,
-        roiEarned: 1500,
-        walletBalance: 800,
-        referredBy: 'john@example.com'
-      },
-      {
-        id: 3,
-        name: 'Michael Brown',
-        email: 'michael@example.com',
-        status: 'inactive',
-        createdAt: new Date('2025-05-20'),
-        phone: '+1098765432',
-        kycStatus: 'rejected',
-        totalInvested: 5000,
-        roiEarned: 200,
-        walletBalance: 100,
-        referredBy: 'jane@example.com'
-      },
-      {
-        id: 4,
-        name: 'Alice Johnson',
-        email: 'alice@example.com',
-        status: 'active',
-        createdAt: new Date('2025-04-10'),
-        phone: '+1123456789',
-        kycStatus: 'verified',
-        totalInvested: 15000,
-        roiEarned: 700,
-        walletBalance: 600,
-        referredBy: 'michael@example.com'
-      },
-      {
-        id: 5,
-        name: 'Robert Lee',
-        email: 'robert@example.com',
-        status: 'active',
-        createdAt: new Date('2025-03-05'),
-        phone: '+1230984567',
-        kycStatus: 'verified',
-        totalInvested: 12000,
-        roiEarned: 900,
-        walletBalance: 450,
-        referredBy: 'alice@example.com'
-      }
-    ]);
-  }, []);
+    if (investorsData.length === 0) {
+      setInvestorsData([
+        {
+          id: 1,
+          name: 'John Doe',
+          email: 'john@example.com',
+          status: 'active',
+          createdAt: new Date('2025-07-01'),
+          phone: '+1234567890',
+          kycStatus: 'verified',
+          totalInvested: 10000,
+          roiEarned: 500,
+          walletBalance: 300,
+          referredBy: 'jane@example.com',
+          twoFactorEnabled: false,
+          idVerified: true,
+          activePlans: 2,
+          maturedPlans: 0,
+          nextRoiDate: '2025-08-01',
+          autoReinvest: false,
+          pendingWithdrawals: 0,
+          lastWithdrawal: null,
+          role: 'Investor',
+          isSuspended: false,
+          lastLogin: '2025-07-15',
+          createdBy: 'admin',
+          auditTrail: true,
+          taxId: '123456789',
+        },
+        {
+          id: 2,
+          name: 'Jane Smith',
+          email: 'jane@example.com',
+          status: 'pending',
+          createdAt: new Date('2025-06-15'),
+          phone: '+1987654321',
+          kycStatus: 'pending',
+          totalInvested: 20000,
+          roiEarned: 1500,
+          walletBalance: 800,
+          referredBy: 'john@example.com',
+          twoFactorEnabled: false,
+          idVerified: false,
+          activePlans: 1,
+          maturedPlans: 0,
+          nextRoiDate: '2025-08-01',
+          autoReinvest: true,
+          pendingWithdrawals: 100,
+          lastWithdrawal: '2025-07-10',
+          role: 'Investor',
+          isSuspended: false,
+          lastLogin: '2025-07-12',
+          createdBy: 'admin',
+          auditTrail: true,
+          taxId: '987654321',
+        },
+        {
+          id: 3,
+          name: 'Michael Brown',
+          email: 'michael@example.com',
+          status: 'inactive',
+          createdAt: new Date('2025-05-20'),
+          phone: '+1098765432',
+          kycStatus: 'rejected',
+          totalInvested: 5000,
+          roiEarned: 200,
+          walletBalance: 100,
+          referredBy: 'jane@example.com',
+          twoFactorEnabled: false,
+          idVerified: false,
+          activePlans: 0,
+          maturedPlans: 1,
+          nextRoiDate: null,
+          autoReinvest: false,
+          pendingWithdrawals: 0,
+          lastWithdrawal: null,
+          role: 'Investor',
+          isSuspended: true,
+          lastLogin: '2025-06-01',
+          createdBy: 'admin',
+          auditTrail: false,
+          taxId: null,
+        },
+        {
+          id: 4,
+          name: 'Alice Johnson',
+          email: 'alice@example.com',
+          status: 'active',
+          createdAt: new Date('2025-04-10'),
+          phone: '+1123456789',
+          kycStatus: 'verified',
+          totalInvested: 15000,
+          roiEarned: 700,
+          walletBalance: 600,
+          referredBy: 'michael@example.com',
+          twoFactorEnabled: true,
+          idVerified: true,
+          activePlans: 3,
+          maturedPlans: 0,
+          nextRoiDate: '2025-07-20',
+          autoReinvest: true,
+          pendingWithdrawals: 200,
+          lastWithdrawal: '2025-07-05',
+          role: 'Investor',
+          isSuspended: false,
+          lastLogin: '2025-07-17',
+          createdBy: 'admin',
+          auditTrail: true,
+          taxId: '456789123',
+        },
+        {
+          id: 5,
+          name: 'Robert Lee',
+          email: 'robert@example.com',
+          status: 'active',
+          createdAt: new Date('2025-03-05'),
+          phone: '+1230984567',
+          kycStatus: 'verified',
+          totalInvested: 12000,
+          roiEarned: 900,
+          walletBalance: 450,
+          referredBy: 'alice@example.com',
+          twoFactorEnabled: false,
+          idVerified: true,
+          activePlans: 2,
+          maturedPlans: 1,
+          nextRoiDate: '2025-07-25',
+          autoReinvest: false,
+          pendingWithdrawals: 0,
+          lastWithdrawal: '2025-06-20',
+          role: 'Investor',
+          isSuspended: false,
+          lastLogin: '2025-07-16',
+          createdBy: 'admin',
+          auditTrail: true,
+          taxId: '789123456',
+        },
+      ]);
+    }
+  }, [investorsData, setInvestorsData]);
 
   const handleFilterChange = (name, value) => {
     setFilters({ ...filters, [name]: value });
@@ -104,7 +177,7 @@ const InvestorManagement = () => {
   const handleSelectInvestor = (id) => setSelectedInvestors(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   const handleSelectAll = () => setSelectedInvestors(selectedInvestors.length === paginatedInvestors.length ? [] : paginatedInvestors.map(i => i.id));
 
-  const filteredInvestors = investors.filter(investor => {
+  const filteredInvestors = investorsData.filter(investor => {
     const matchesSearch = investor.name.toLowerCase().includes(filters.search.toLowerCase()) || investor.email.toLowerCase().includes(filters.search.toLowerCase());
     const matchesStatus = filters.status === 'all' || investor.status === filters.status;
     const matchesDate = (!filters.dateFrom || investor.createdAt >= filters.dateFrom) && (!filters.dateTo || investor.createdAt <= filters.dateTo);
@@ -141,9 +214,9 @@ const InvestorManagement = () => {
   };
 
   const stats = [
-    { title: 'Total Investors', value: investors.length, icon: AddIcon, change: '+5% this month' },
-    { title: 'Active', value: investors.filter(i => i.status === 'active').length, icon: AddIcon, change: 'Active' },
-    { title: 'Pending KYC', value: investors.filter(i => i.status === 'pending').length, icon: UploadIcon, change: 'Pending' },
+    { title: 'Total Investors', value: investorsData.length, icon: AddIcon, change: '+5% this month' },
+    { title: 'Active', value: investorsData.filter(i => i.status === 'active').length, icon: AddIcon, change: 'Active' },
+    { title: 'Pending KYC', value: investorsData.filter(i => i.status === 'pending').length, icon: UploadIcon, change: 'Pending' },
   ];
 
   return (
@@ -329,4 +402,3 @@ const InvestorManagement = () => {
 };
 
 export default InvestorManagement;
-

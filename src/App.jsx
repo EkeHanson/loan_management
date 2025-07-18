@@ -12,13 +12,9 @@ import StaffDashboard from './Pages/StaffDashboard/Dashboard';
 import SocialCallback from './Pages/CRMLandingPages/SocialCallback';
 import ScrollToTop from './assets/ScrollToTop';
 import JobApplication from './Pages/CRMLandingPages/JobApplication';
-import PrivateRoute from './PrivateRoute';
 import { useMobileNav } from './context/MobileNavContext';
 import { DashboardProvider } from './components/loanCompany/Dashboard/DashboardContext';
 import AdminDashboard from './components/loanCompany/Dashboard/Dashboard';
-import InvestorManagement from './components/loanCompany/Dashboard/InvestorManagement';
-import InvestmentManagement from './components/loanCompany/Dashboard/InvestmentManagement';
-import ActivityLog from './components/loanCompany/Dashboard/ActivityLog'; // New component
 
 function App() {
   const { mobileNavActive } = useMobileNav();
@@ -28,20 +24,14 @@ function App() {
       <ScrollToTop />
       <DashboardProvider>
         <Routes>
-          <Route path="/*" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<InvestorRegistration />} />
-          {/* <Route element={<PrivateRoute />}> */}
-            <Route path="/company/*" element={<CompanyDashboard />} />
-            <Route path="/company/admin/*" element={<AdminDashboard />}>
-              <Route path="investors" element={<InvestorManagement />} />
-              <Route path="investments" element={<InvestmentManagement />} />
-              <Route path="" element={<div>Welcome to Admin Dashboard</div>} />
-            </Route>
-            <Route path="/staff/*" element={<StaffDashboard />} />
-          {/* </Route> */}
+          <Route path="/company/admin" element={<AdminDashboard />} />
+          <Route path="/company/*" element={<CompanyDashboard />} />
+          <Route path="/staff/*" element={<StaffDashboard />} />
           <Route path="/api/social/callback/" element={<SocialCallback />} />
           <Route path="/jobs/:unique_link" element={<JobApplication />} />
         </Routes>
