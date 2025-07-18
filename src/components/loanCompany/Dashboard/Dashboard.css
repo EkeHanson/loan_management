@@ -190,3 +190,126 @@
 .pagination-prev svg, .pagination-next svg {
   stroke: #4a90e2;
 }
+/* Add or replace in Dashboard.css */
+.profile-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.3); /* Subtle background overlay */
+}
+
+.profile-dialog .dialog-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent; /* Handled by parent */
+}
+
+.profile-dialog .dialog-content {
+  background: rgba(255, 255, 255, 0.9); /* Glassmorphism base */
+  backdrop-filter: blur(10px); /* Glass effect */
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
+  padding: 30px;
+  border-radius: 15px;
+  width: 450px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+  position: relative;
+  text-align: center;
+}
+
+.profile-dialog .dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.profile-dialog .dialog-header h3 {
+  margin: 0;
+  font-size: 24px;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.profile-dialog .dialog-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #e74c3c;
+  transition: color 0.3s ease;
+}
+
+.profile-dialog .dialog-close:hover {
+  color: #c0392b;
+}
+
+.profile-dialog .dialog-body {
+  text-align: left;
+}
+
+.profile-details {
+  display: grid;
+  gap: 15px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-details p {
+  margin: 0;
+  font-size: 16px;
+  color: #34495e;
+  line-height: 1.5;
+}
+
+.profile-details strong {
+  color: #2980b9;
+  font-weight: 500;
+}
+
+/* Animation for modal entrance */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.profile-avatar-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.profile-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #7d50a8;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+}

@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Add as AddIcon, Delete as DeleteIcon, Upload as UploadIcon, Search as SearchIcon, FilterList as FilterIcon, Refresh as RefreshIcon, Close as CloseIcon } from '@mui/icons-material';
+import { Tooltip } from '@mui/material';
+import {
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  Upload as UploadIcon,
+  Search as SearchIcon,
+  FilterList as FilterIcon,
+  Refresh as RefreshIcon,
+  Close as CloseIcon,
+} from '@mui/icons-material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import './Dashboard.css';
+import InvestorProfile from './InvestorProfile';
 
 const InvestorManagement = () => {
   const [investors, setInvestors] = useState([]);
@@ -14,47 +24,97 @@ const InvestorManagement = () => {
     rowsPerPage: 5,
     count: 0,
   });
+  const [selectedInvestor, setSelectedInvestor] = useState(null);
 
   useEffect(() => {
-    // Simulate API call with 10 investors
     setInvestors([
-      { id: 1, name: 'John Doe', email: 'john@example.com', status: 'active', createdAt: new Date('2025-07-01') },
-      { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'pending', createdAt: new Date('2025-07-02') },
-      { id: 3, name: 'Michael Johnson', email: 'michael@example.com', status: 'active', createdAt: new Date('2025-07-03') },
-      { id: 4, name: 'Emily Davis', email: 'emily@example.com', status: 'active', createdAt: new Date('2025-07-04') },
-      { id: 5, name: 'Chris Lee', email: 'chris@example.com', status: 'pending', createdAt: new Date('2025-07-05') },
-      { id: 6, name: 'Sarah Brown', email: 'sarah@example.com', status: 'active', createdAt: new Date('2025-07-06') },
-      { id: 7, name: 'David Wilson', email: 'david@example.com', status: 'pending', createdAt: new Date('2025-07-07') },
-      { id: 8, name: 'Laura Taylor', email: 'laura@example.com', status: 'active', createdAt: new Date('2025-07-08') },
-      { id: 9, name: 'Daniel Anderson', email: 'daniel@example.com', status: 'pending', createdAt: new Date('2025-07-09') },
-      { id: 10, name: 'Olivia Martin', email: 'olivia@example.com', status: 'active', createdAt: new Date('2025-07-10') },
+      {
+        id: 1,
+        name: 'John Doe',
+        email: 'john@example.com',
+        status: 'active',
+        createdAt: new Date('2025-07-01'),
+        phone: '+1234567890',
+        kycStatus: 'verified',
+        totalInvested: 10000,
+        roiEarned: 500,
+        walletBalance: 300,
+        referredBy: 'jane@example.com'
+      },
+      {
+        id: 2,
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        status: 'pending',
+        createdAt: new Date('2025-06-15'),
+        phone: '+1987654321',
+        kycStatus: 'pending',
+        totalInvested: 20000,
+        roiEarned: 1500,
+        walletBalance: 800,
+        referredBy: 'john@example.com'
+      },
+      {
+        id: 3,
+        name: 'Michael Brown',
+        email: 'michael@example.com',
+        status: 'inactive',
+        createdAt: new Date('2025-05-20'),
+        phone: '+1098765432',
+        kycStatus: 'rejected',
+        totalInvested: 5000,
+        roiEarned: 200,
+        walletBalance: 100,
+        referredBy: 'jane@example.com'
+      },
+      {
+        id: 4,
+        name: 'Alice Johnson',
+        email: 'alice@example.com',
+        status: 'active',
+        createdAt: new Date('2025-04-10'),
+        phone: '+1123456789',
+        kycStatus: 'verified',
+        totalInvested: 15000,
+        roiEarned: 700,
+        walletBalance: 600,
+        referredBy: 'michael@example.com'
+      },
+      {
+        id: 5,
+        name: 'Robert Lee',
+        email: 'robert@example.com',
+        status: 'active',
+        createdAt: new Date('2025-03-05'),
+        phone: '+1230984567',
+        kycStatus: 'verified',
+        totalInvested: 12000,
+        roiEarned: 900,
+        walletBalance: 450,
+        referredBy: 'alice@example.com'
+      }
     ]);
   }, []);
 
   const handleFilterChange = (name, value) => {
     setFilters({ ...filters, [name]: value });
-    setPagination(prev => ({ ...prev, currentPage: 1 })); // Reset to first page on filter change
+    setPagination(prev => ({ ...prev, currentPage: 1 }));
   };
 
   const handleSelectInvestor = (id) => setSelectedInvestors(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   const handleSelectAll = () => setSelectedInvestors(selectedInvestors.length === paginatedInvestors.length ? [] : paginatedInvestors.map(i => i.id));
 
-  // Filter investors based on search, status, and date range
   const filteredInvestors = investors.filter(investor => {
-    const matchesSearch = investor.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-                         investor.email.toLowerCase().includes(filters.search.toLowerCase());
+    const matchesSearch = investor.name.toLowerCase().includes(filters.search.toLowerCase()) || investor.email.toLowerCase().includes(filters.search.toLowerCase());
     const matchesStatus = filters.status === 'all' || investor.status === filters.status;
-    const matchesDate = (!filters.dateFrom || investor.createdAt >= filters.dateFrom) &&
-                        (!filters.dateTo || investor.createdAt <= filters.dateTo);
+    const matchesDate = (!filters.dateFrom || investor.createdAt >= filters.dateFrom) && (!filters.dateTo || investor.createdAt <= filters.dateTo);
     return matchesSearch && matchesStatus && matchesDate;
   });
 
-  // Update total count after filtering
   useEffect(() => {
     setPagination(prev => ({ ...prev, count: filteredInvestors.length }));
   }, [filteredInvestors]);
 
-  // Get paginated subset of filtered investors
   const paginatedInvestors = filteredInvestors.slice(
     (pagination.currentPage - 1) * pagination.rowsPerPage,
     pagination.currentPage * pagination.rowsPerPage
@@ -70,6 +130,14 @@ const InvestorManagement = () => {
       rowsPerPage: parseInt(event.target.value, 10),
       currentPage: 1,
     }));
+  };
+
+  const handleViewProfile = (investor) => {
+    setSelectedInvestor(investor);
+  };
+
+  const handleCloseProfile = () => {
+    setSelectedInvestor(null);
   };
 
   const stats = [
@@ -153,28 +221,41 @@ const InvestorManagement = () => {
           <table className="data-table">
             <thead>
               <tr>
-                <th>
-                  <input type="checkbox" checked={selectedInvestors.length === paginatedInvestors.length} onChange={handleSelectAll} />
-                </th>
+                <th><input type="checkbox" checked={selectedInvestors.length === paginatedInvestors.length} onChange={handleSelectAll} /></th>
                 <th>Investor</th>
                 <th>Email</th>
                 <th>Status</th>
+                <th>Phone</th>
+                <th>KYC Status</th>
+                <th>Total Invested</th>
+                <th>ROI Earned</th>
+                <th>Wallet</th>
+                <th>Referred By</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {paginatedInvestors.map(investor => (
                 <tr key={investor.id}>
-                  <td>
-                    <input type="checkbox" checked={selectedInvestors.includes(investor.id)} onChange={() => handleSelectInvestor(investor.id)} />
-                  </td>
+                  <td><input type="checkbox" checked={selectedInvestors.includes(investor.id)} onChange={() => handleSelectInvestor(investor.id)} /></td>
                   <td>{investor.name}</td>
                   <td>{investor.email}</td>
                   <td>{investor.status}</td>
+                  <td>{investor.phone || '-'}</td>
+                  <td>{investor.kycStatus || '-'}</td>
+                  <td>{investor.totalInvested ? `$${investor.totalInvested}` : '-'}</td>
+                  <td>{investor.roiEarned ? `$${investor.roiEarned}` : '-'}</td>
+                  <td>{investor.walletBalance ? `$${investor.walletBalance}` : '-'}</td>
+                  <td>{investor.referredBy || '-'}</td>
                   <td>
-                    <button className="btn btn-icon">
-                      <UploadIcon className="btn-icon" />
-                    </button>
+                    <Tooltip title="View Investor Actions" arrow>
+                      <button
+                        className="btn btn-icon"
+                        onClick={() => handleViewProfile(investor)}
+                      >
+                        <UploadIcon className="btn-icon" />
+                      </button>
+                    </Tooltip>
                   </td>
                 </tr>
               ))}
@@ -235,6 +316,12 @@ const InvestorManagement = () => {
               </div>
             </div>
           </div>
+        )}
+        {selectedInvestor && (
+          <InvestorProfile
+            investor={selectedInvestor}
+            onClose={handleCloseProfile}
+          />
         )}
       </div>
     </LocalizationProvider>
