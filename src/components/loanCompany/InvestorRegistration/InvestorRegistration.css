@@ -1,0 +1,140 @@
+/* InvestorRegistration.css */
+.registration-container {
+  font-family: 'Lora', 'Segoe UI', serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  color: #1a2a44;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.company-logo {
+  display: block;
+  margin: 0 auto 2rem;
+  max-width: 150px;
+  height: auto;
+}
+
+.registration-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.registration-header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #1a2a44;
+  margin-bottom: 0.5rem;
+}
+
+.registration-header p {
+  font-size: 1.1rem;
+  color: #4b5563;
+}
+
+.registration-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #1a2a44;
+}
+
+.form-group input,
+.form-group select {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  color: #1a2a44;
+}
+
+.name-fields {
+  display: flex;
+  gap: 1rem;
+}
+
+.name-fields input {
+  flex: 1;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+}
+
+.submit-button,
+.download-button {
+  background-color: #3b82f6;
+  color: #ffffff;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.download-button {
+  background-color: #10b981;
+}
+
+.submit-button:hover {
+  background-color: #2563eb;
+  transform: translateY(-2px);
+}
+
+.download-button:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .registration-container {
+    padding: 1rem;
+  }
+
+  .name-fields {
+    flex-direction: column;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 0.6rem;
+    font-size: 0.95rem;
+  }
+
+  .submit-button,
+  .download-button {
+    padding: 0.9rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .registration-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .registration-header p {
+    font-size: 1rem;
+  }
+}
