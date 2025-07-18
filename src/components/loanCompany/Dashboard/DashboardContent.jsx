@@ -70,3 +70,4 @@ const DashboardContent = ({ activeSection }) => {
 };
 
 export default DashboardContent;
+

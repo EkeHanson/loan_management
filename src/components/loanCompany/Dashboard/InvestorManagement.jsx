@@ -329,3 +329,4 @@ const InvestorManagement = () => {
 };
 
 export default InvestorManagement;
+

@@ -64,3 +64,5 @@ const InvestorProfile = ({ investor, onClose }) => {
 };
 
 export default InvestorProfile;
+
+

@@ -228,3 +228,5 @@ useEffect(() => {
 };
 
 export default InvestmentManagement;
+
+
