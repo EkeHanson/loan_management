@@ -38,3 +38,4 @@ const Sidebar = ({ setActiveSection, activeSection }) => {
 };
 
 export default Sidebar;
+

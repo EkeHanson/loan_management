@@ -74,6 +74,8 @@ const InvestorManagement = () => {
           createdBy: 'admin',
           auditTrail: true,
           taxId: '123456789',
+          isLocked: false,
+          isDeleted: false,
         },
         {
           id: 2,
@@ -101,6 +103,8 @@ const InvestorManagement = () => {
           createdBy: 'admin',
           auditTrail: true,
           taxId: '987654321',
+          isLocked: false,
+          isDeleted: false,
         },
         {
           id: 3,
@@ -128,6 +132,8 @@ const InvestorManagement = () => {
           createdBy: 'admin',
           auditTrail: false,
           taxId: null,
+          isLocked: true,
+          isDeleted: false,
         },
         {
           id: 4,
@@ -155,6 +161,8 @@ const InvestorManagement = () => {
           createdBy: 'admin',
           auditTrail: true,
           taxId: '456789123',
+          isLocked: false,
+          isDeleted: false,
         },
         {
           id: 5,
@@ -182,6 +190,8 @@ const InvestorManagement = () => {
           createdBy: 'admin',
           auditTrail: true,
           taxId: '789123456',
+          isLocked: false,
+          isDeleted: false,
         },
       ]);
     }
@@ -199,7 +209,7 @@ const InvestorManagement = () => {
     const matchesSearch = investor.name.toLowerCase().includes(filters.search.toLowerCase()) || investor.email.toLowerCase().includes(filters.search.toLowerCase());
     const matchesStatus = filters.status === 'all' || investor.status === filters.status;
     const matchesDate = (!filters.dateFrom || investor.createdAt >= filters.dateFrom) && (!filters.dateTo || investor.createdAt <= filters.dateTo);
-    return matchesSearch && matchesStatus && matchesDate;
+    return matchesSearch && matchesStatus && matchesDate && !investor.isDeleted;
   });
 
   useEffect(() => {
@@ -232,8 +242,10 @@ const InvestorManagement = () => {
   };
 
   const handleDeleteSelected = () => {
-    setInvestorsData(prev => prev.filter(investor => !selectedInvestors.includes(investor.id)));
-    setSelectedInvestors([]);
+    if (window.confirm(`Are you sure you want to delete ${selectedInvestors.length} investor(s)?`)) {
+      setInvestorsData(prev => prev.filter(investor => !selectedInvestors.includes(investor.id)));
+      setSelectedInvestors([]);
+    }
   };
 
   const validateForm = () => {
@@ -266,12 +278,12 @@ const InvestorManagement = () => {
       email: newInvestor.email,
       status: newInvestor.kycStatus === 'verified' ? 'active' : 'pending',
       createdAt: new Date(),
-      phone: newInvestor.phone || null,
+      phone: newInvestor.phone || 'N/A',
       kycStatus: newInvestor.kycStatus,
-      totalInvested: Number(newInvestor.totalInvested),
-      roiEarned: Number(newInvestor.roiEarned),
-      walletBalance: Number(newInvestor.walletBalance),
-      referredBy: newInvestor.referredBy || null,
+      totalInvested: Number(newInvestor.totalInvested) || 0,
+      roiEarned: Number(newInvestor.roiEarned) || 0,
+      walletBalance: Number(newInvestor.walletBalance) || 0,
+      referredBy: newInvestor.referredBy || 'N/A',
       twoFactorEnabled: false,
       idVerified: newInvestor.kycStatus === 'verified',
       activePlans: 0,
@@ -285,7 +297,9 @@ const InvestorManagement = () => {
       lastLogin: null,
       createdBy: 'admin',
       auditTrail: true,
-      taxId: newInvestor.taxId || null,
+      taxId: newInvestor.taxId || 'N/A',
+      isLocked: false,
+      isDeleted: false,
     };
     setInvestorsData(prev => [...prev, investor]);
     setNewInvestor({
@@ -308,10 +322,15 @@ const InvestorManagement = () => {
     setNewInvestor(prev => ({ ...prev, [name]: value }));
   };
 
+  const formatDate = (date) => {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString();
+  };
+
   const stats = [
-    { title: 'Total Investors', value: investorsData.length, icon: AddIcon, change: '+5% this month' },
-    { title: 'Active', value: investorsData.filter(i => i.status === 'active').length, icon: AddIcon, change: 'Active' },
-    { title: 'Pending KYC', value: investorsData.filter(i => i.status === 'pending').length, icon: UploadIcon, change: 'Pending' },
+    { title: 'Total Investors', value: investorsData.filter(i => !i.isDeleted).length, icon: AddIcon, change: '+5% this month' },
+    { title: 'Active', value: investorsData.filter(i => i.status === 'active' && !i.isDeleted).length, icon: AddIcon, change: 'Active' },
+    { title: 'Pending KYC', value: investorsData.filter(i => i.status === 'pending' && !i.isDeleted).length, icon: UploadIcon, change: 'Pending' },
   ];
 
   return (
@@ -358,6 +377,7 @@ const InvestorManagement = () => {
               <option value="all">All</option>
               <option value="active">Active</option>
               <option value="pending">Pending</option>
+              <option value="inactive">Inactive</option>
             </select>
           </div>
           <div className="filter-item">
@@ -386,46 +406,88 @@ const InvestorManagement = () => {
           </div>
         </div>
         <div className="table-container">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th><input type="checkbox" checked={selectedInvestors.length === paginatedInvestors.length} onChange={handleSelectAll} /></th>
-                <th>Investor</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Phone</th>
-                <th>KYC Status</th>
-                <th>Total Invested</th>
-                <th>ROI Earned</th>
-                <th>Wallet</th>
-                <th>Referred By</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedInvestors.map(investor => (
-                <tr key={investor.id}>
-                  <td><input type="checkbox" checked={selectedInvestors.includes(investor.id)} onChange={() => handleSelectInvestor(investor.id)} /></td>
-                  <td>{investor.name}</td>
-                  <td>{investor.email}</td>
-                  <td>{investor.status}</td>
-                  <td>{investor.phone || '-'}</td>
-                  <td>{investor.kycStatus || '-'}</td>
-                  <td>{investor.totalInvested ? `$${investor.totalInvested.toLocaleString()}` : '-'}</td>
-                  <td>{investor.roiEarned ? `$${investor.roiEarned.toLocaleString()}` : '-'}</td>
-                  <td>{investor.walletBalance ? `$${investor.walletBalance.toLocaleString()}` : '-'}</td>
-                  <td>{investor.referredBy || '-'}</td>
-                  <td>
-                    <Tooltip title="View Investor Actions" arrow>
-                      <button className="btn btn-icon" onClick={() => handleViewProfile(investor)}>
-                        <UploadIcon className="btn-icon" />
-                      </button>
-                    </Tooltip>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {paginatedInvestors.length === 0 ? (
+            <div className="no-data">No investors found.</div>
+          ) : (
+            <>
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" checked={selectedInvestors.length === paginatedInvestors.length} onChange={handleSelectAll} /></th>
+                    <th>Investor</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Phone</th>
+                    <th>KYC Status</th>
+                    <th>Total Invested</th>
+                    <th>ROI Earned</th>
+                    <th>Wallet</th>
+                    <th>Referred By</th>
+                    <th>Active Plans</th>
+                    <th>Matured Plans</th>
+                    <th>Next ROI Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedInvestors.map(investor => (
+                    <tr key={investor.id}>
+                      <td><input type="checkbox" checked={selectedInvestors.includes(investor.id)} onChange={() => handleSelectInvestor(investor.id)} /></td>
+                      <td>{investor.name || 'N/A'}</td>
+                      <td>{investor.email || 'N/A'}</td>
+                      <td>{investor.status || 'N/A'}</td>
+                      <td className="hide-on-mobile">{investor.phone || 'N/A'}</td>
+                      <td>{investor.kycStatus || 'N/A'}</td>
+                      <td>${(investor.totalInvested || 0).toLocaleString()}</td>
+                      <td>${(investor.roiEarned || 0).toLocaleString()}</td>
+                      <td>${(investor.walletBalance || 0).toLocaleString()}</td>
+                      <td className="hide-on-mobile">{investor.referredBy || 'N/A'}</td>
+                      <td>{investor.activePlans || 0}</td>
+                      <td className="hide-on-mobile">{investor.maturedPlans || 0}</td>
+                      <td className="hide-on-mobile">{formatDate(investor.nextRoiDate)}</td>
+                      <td>
+                        <Tooltip title="View Investor Profile" arrow>
+                          <button className="btn btn-icon" onClick={() => handleViewProfile(investor)}>
+                            <UploadIcon className="btn-icon" />
+                          </button>
+                        </Tooltip>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="card-list">
+                {paginatedInvestors.map(investor => (
+                  <div key={investor.id} className="investor-card">
+                    <div className="card-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={selectedInvestors.includes(investor.id)}
+                        onChange={() => handleSelectInvestor(investor.id)}
+                      />
+                    </div>
+                    <div className="card-content">
+                      <div><strong>Name:</strong> {investor.name || 'N/A'}</div>
+                      <div><strong>Email:</strong> {investor.email || 'N/A'}</div>
+                      <div><strong>Status:</strong> {investor.status || 'N/A'}</div>
+                      <div><strong>KYC Status:</strong> {investor.kycStatus || 'N/A'}</div>
+                      <div><strong>Total Invested:</strong> ${(investor.totalInvested || 0).toLocaleString()}</div>
+                      <div><strong>ROI Earned:</strong> ${(investor.roiEarned || 0).toLocaleString()}</div>
+                      <div><strong>Wallet:</strong> ${(investor.walletBalance || 0).toLocaleString()}</div>
+                      <div><strong>Active Plans:</strong> {investor.activePlans || 0}</div>
+                    </div>
+                    <div className="card-actions">
+                      <Tooltip title="View Investor Profile" arrow>
+                        <button className="btn btn-icon" onClick={() => handleViewProfile(investor)}>
+                          <UploadIcon className="btn-icon" />
+                        </button>
+                      </Tooltip>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
           <div className="custom-pagination">
             <div className="pagination-items">
               <span>Items per page:</span>
