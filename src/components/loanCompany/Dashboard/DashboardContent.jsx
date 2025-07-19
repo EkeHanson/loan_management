@@ -1,12 +1,13 @@
 import React, { useContext } from 'react';
-import { DashboardContext } from './DashboardContext';
+import { ClockContext } from '../../../context/ClockContext';
+import { DashboardContext } from '../../../context/DashboardContext';
 import InvestorManagement from './InvestorManagement';
 import InvestmentManagement from './InvestmentManagement';
 import { People as PeopleIcon, MonetizationOn as MonetizationOnIcon, HourglassEmpty as HourglassEmptyIcon } from '@mui/icons-material';
 import './Dashboard.css';
 
 const DashboardContent = ({ activeSection }) => {
-  const { currentDateTime, notifications } = useContext(DashboardContext);
+  const { ClockContext, notifications } = useContext(DashboardContext);
 
   const overviewData = {
     totalInvestors: 150,
@@ -136,8 +137,7 @@ const DashboardContent = ({ activeSection }) => {
 
   return (
     <div className="dashboard-content">
-      <div className="date-time">{currentDateTime} WAT</div>
-      {notifications.length > 0 && (
+      {/* {notifications.length > 0 && (
         <div className="notification-panel">
           <h3>Notifications</h3>
           <ul>
@@ -148,7 +148,7 @@ const DashboardContent = ({ activeSection }) => {
             ))}
           </ul>
         </div>
-      )}
+      )} */}
       {renderContent()}
     </div>
   );

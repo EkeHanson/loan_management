@@ -10,7 +10,7 @@ import {
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { TextField } from '@mui/material';
-import { DashboardContext } from './DashboardContext';
+import { DashboardContext } from '../../../context/DashboardContext';
 import './Dashboard.css';
 
 const InvestmentManagement = () => {

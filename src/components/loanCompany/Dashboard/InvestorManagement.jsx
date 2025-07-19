@@ -11,21 +11,39 @@ import {
 } from '@mui/icons-material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { DashboardContext } from './DashboardContext';
+import { DashboardContext } from '../../../context/DashboardContext';
 import InvestorProfile from './InvestorProfile';
 import './Dashboard.css';
 
 const InvestorManagement = () => {
-  const { investorsData, setInvestorsData } = useContext(DashboardContext);
+  const context = useContext(DashboardContext);
+  if (!context) {
+    console.error('DashboardContext is undefined. Ensure InvestorManagement is wrapped in DashboardProvider.');
+    return <div>Error: Context not found. Please try again later.</div>;
+  }
+  const { investorsData, setInvestorsData } = context;
+
   const [filters, setFilters] = useState({ search: '', status: 'all', dateFrom: null, dateTo: null });
   const [selectedInvestors, setSelectedInvestors] = useState([]);
-  const [showUpload, setShowUpload] = useState(false);
+  const [showAddInvestor, setShowAddInvestor] = useState(false);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     rowsPerPage: 5,
     count: 0,
   });
   const [selectedInvestor, setSelectedInvestor] = useState(null);
+  const [newInvestor, setNewInvestor] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    kycStatus: 'pending',
+    totalInvested: 0,
+    roiEarned: 0,
+    walletBalance: 0,
+    referredBy: '',
+    taxId: '',
+  });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (investorsData.length === 0) {
@@ -213,6 +231,83 @@ const InvestorManagement = () => {
     setSelectedInvestor(null);
   };
 
+  const handleDeleteSelected = () => {
+    setInvestorsData(prev => prev.filter(investor => !selectedInvestors.includes(investor.id)));
+    setSelectedInvestors([]);
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!newInvestor.name.trim()) newErrors.name = 'Name is required';
+    if (!newInvestor.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(newInvestor.email)) {
+      newErrors.email = 'Invalid email format';
+    }
+    if (newInvestor.phone && !/^\+?\d{10,15}$/.test(newInvestor.phone)) {
+      newErrors.phone = 'Invalid phone number';
+    }
+    if (newInvestor.totalInvested < 0) newErrors.totalInvested = 'Total invested cannot be negative';
+    if (newInvestor.roiEarned < 0) newErrors.roiEarned = 'ROI earned cannot be negative';
+    if (newInvestor.walletBalance < 0) newErrors.walletBalance = 'Wallet balance cannot be negative';
+    if (newInvestor.taxId && !/^\d{9}$/.test(newInvestor.taxId)) {
+      newErrors.taxId = 'Tax ID must be 9 digits';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleAddInvestor = () => {
+    if (!validateForm()) return;
+    const newId = investorsData.length > 0 ? Math.max(...investorsData.map(i => i.id)) + 1 : 1;
+    const investor = {
+      id: newId,
+      name: newInvestor.name,
+      email: newInvestor.email,
+      status: newInvestor.kycStatus === 'verified' ? 'active' : 'pending',
+      createdAt: new Date(),
+      phone: newInvestor.phone || null,
+      kycStatus: newInvestor.kycStatus,
+      totalInvested: Number(newInvestor.totalInvested),
+      roiEarned: Number(newInvestor.roiEarned),
+      walletBalance: Number(newInvestor.walletBalance),
+      referredBy: newInvestor.referredBy || null,
+      twoFactorEnabled: false,
+      idVerified: newInvestor.kycStatus === 'verified',
+      activePlans: 0,
+      maturedPlans: 0,
+      nextRoiDate: null,
+      autoReinvest: false,
+      pendingWithdrawals: 0,
+      lastWithdrawal: null,
+      role: 'Investor',
+      isSuspended: false,
+      lastLogin: null,
+      createdBy: 'admin',
+      auditTrail: true,
+      taxId: newInvestor.taxId || null,
+    };
+    setInvestorsData(prev => [...prev, investor]);
+    setNewInvestor({
+      name: '',
+      email: '',
+      phone: '',
+      kycStatus: 'pending',
+      totalInvested: 0,
+      roiEarned: 0,
+      walletBalance: 0,
+      referredBy: '',
+      taxId: '',
+    });
+    setShowAddInvestor(false);
+    setErrors({});
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewInvestor(prev => ({ ...prev, [name]: value }));
+  };
+
   const stats = [
     { title: 'Total Investors', value: investorsData.length, icon: AddIcon, change: '+5% this month' },
     { title: 'Active', value: investorsData.filter(i => i.status === 'active').length, icon: AddIcon, change: 'Active' },
@@ -236,11 +331,11 @@ const InvestorManagement = () => {
           ))}
         </div>
         <div className="actions">
-          <button className="btn btn-primary" onClick={() => setShowUpload(true)}>
+          <button className="btn btn-primary" onClick={() => setShowAddInvestor(true)}>
             <AddIcon className="btn-icon" /> Add Investor
           </button>
           {selectedInvestors.length > 0 && (
-            <button className="btn btn-error" onClick={() => {}}>
+            <button className="btn btn-error" onClick={handleDeleteSelected}>
               <DeleteIcon className="btn-icon" /> Delete Selected ({selectedInvestors.length})
             </button>
           )}
@@ -316,16 +411,13 @@ const InvestorManagement = () => {
                   <td>{investor.status}</td>
                   <td>{investor.phone || '-'}</td>
                   <td>{investor.kycStatus || '-'}</td>
-                  <td>{investor.totalInvested ? `$${investor.totalInvested}` : '-'}</td>
-                  <td>{investor.roiEarned ? `$${investor.roiEarned}` : '-'}</td>
-                  <td>{investor.walletBalance ? `$${investor.walletBalance}` : '-'}</td>
+                  <td>{investor.totalInvested ? `$${investor.totalInvested.toLocaleString()}` : '-'}</td>
+                  <td>{investor.roiEarned ? `$${investor.roiEarned.toLocaleString()}` : '-'}</td>
+                  <td>{investor.walletBalance ? `$${investor.walletBalance.toLocaleString()}` : '-'}</td>
                   <td>{investor.referredBy || '-'}</td>
                   <td>
                     <Tooltip title="View Investor Actions" arrow>
-                      <button
-                        className="btn btn-icon"
-                        onClick={() => handleViewProfile(investor)}
-                      >
+                      <button className="btn btn-icon" onClick={() => handleViewProfile(investor)}>
                         <UploadIcon className="btn-icon" />
                       </button>
                     </Tooltip>
@@ -337,10 +429,7 @@ const InvestorManagement = () => {
           <div className="custom-pagination">
             <div className="pagination-items">
               <span>Items per page:</span>
-              <select
-                value={pagination.rowsPerPage}
-                onChange={handleChangeRowsPerPage}
-              >
+              <select value={pagination.rowsPerPage} onChange={handleChangeRowsPerPage}>
                 <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="25">25</option>
@@ -374,18 +463,129 @@ const InvestorManagement = () => {
             </div>
           </div>
         </div>
-        {showUpload && (
+        {showAddInvestor && (
           <div className="dialog">
-            <div className="dialog-backdrop" onClick={() => setShowUpload(false)}></div>
+            <div className="dialog-backdrop" onClick={() => setShowAddInvestor(false)}></div>
             <div className="dialog-content">
               <div className="dialog-header">
-                <h3>Upload Investor Data</h3>
-                <button className="dialog-close" onClick={() => setShowUpload(false)}>
+                <h3>Add New Investor</h3>
+                <button className="dialog-close" onClick={() => setShowAddInvestor(false)}>
                   <CloseIcon className="btn-icon" />
                 </button>
               </div>
               <div className="dialog-body">
-                <input type="file" onChange={() => {}} />
+                <div className="form">
+                  <div className="form-group">
+                    <label>Name *</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={newInvestor.name}
+                      onChange={handleInputChange}
+                      placeholder="Enter name"
+                    />
+                    {errors.name && <span className="error">{errors.name}</span>}
+                  </div>
+                  <div className="form-group">
+                    <label>Email *</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={newInvestor.email}
+                      onChange={handleInputChange}
+                      placeholder="Enter email"
+                    />
+                    {errors.email && <span className="error">{errors.email}</span>}
+                  </div>
+                  <div className="form-group">
+                    <label>Phone</label>
+                    <input
+                      type="text"
+                      name="phone"
+                      value={newInvestor.phone}
+                      onChange={handleInputChange}
+                      placeholder="Enter phone number"
+                    />
+                    {errors.phone && <span className="error">{errors.phone}</span>}
+                  </div>
+                  <div className="form-group">
+                    <label>KYC Status</label>
+                    <select
+                      name="kycStatus"
+                      value={newInvestor.kycStatus}
+                      onChange={handleInputChange}
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="verified">Verified</option>
+                      <option value="rejected">Rejected</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Total Invested ($)</label>
+                    <input
+                      type="number"
+                      name="totalInvested"
+                      value={newInvestor.totalInvested}
+                      onChange={handleInputChange}
+                      placeholder="Enter total invested"
+                      min="0"
+                    />
+                    {errors.totalInvested && <span className="error">{errors.totalInvested}</span>}
+                  </div>
+                  <div className="form-group">
+                    <label>ROI Earned ($)</label>
+                    <input
+                      type="number"
+                      name="roiEarned"
+                      value={newInvestor.roiEarned}
+                      onChange={handleInputChange}
+                      placeholder="Enter ROI earned"
+                      min="0"
+                    />
+                    {errors.roiEarned && <span className="error">{errors.roiEarned}</span>}
+                  </div>
+                  <div className="form-group">
+                    <label>Wallet Balance ($)</label>
+                    <input
+                      type="number"
+                      name="walletBalance"
+                      value={newInvestor.walletBalance}
+                      onChange={handleInputChange}
+                      placeholder="Enter wallet balance"
+                      min="0"
+                    />
+                    {errors.walletBalance && <span className="error">{errors.walletBalance}</span>}
+                  </div>
+                  <div className="form-group">
+                    <label>Referred By</label>
+                    <input
+                      type="text"
+                      name="referredBy"
+                      value={newInvestor.referredBy}
+                      onChange={handleInputChange}
+                      placeholder="Enter referrer email"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Tax ID</label>
+                    <input
+                      type="text"
+                      name="taxId"
+                      value={newInvestor.taxId}
+                      onChange={handleInputChange}
+                      placeholder="Enter 9-digit tax ID"
+                    />
+                    {errors.taxId && <span className="error">{errors.taxId}</span>}
+                  </div>
+                </div>
+                <div className="form-actions">
+                  <button className="btn btn-primary" onClick={handleAddInvestor}>
+                    Add Investor
+                  </button>
+                  <button className="btn btn-error" onClick={() => setShowAddInvestor(false)}>
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </div>

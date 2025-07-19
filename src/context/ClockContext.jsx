@@ -1,29 +1,19 @@
-// context/ClockContext.js
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
-const ClockContext = createContext();
-
-export const useClock = () => useContext(ClockContext);
+export const ClockContext = createContext();
 
 export const ClockProvider = ({ children }) => {
-  const [isClockedIn, setIsClockedIn] = useState(false);
-  const [clockInTime, setClockInTime] = useState(null);
-  const [clockOutTime, setClockOutTime] = useState(null);
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
-  const clockIn = () => {
-    setIsClockedIn(true);
-    setClockInTime(new Date());
-  };
-
-  const clockOut = () => {
-    setIsClockedIn(false);
-    setClockOutTime(new Date());
-  };
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
-    <ClockContext.Provider
-      value={{ isClockedIn, clockInTime, clockOutTime, clockIn, clockOut }}
-    >
+    <ClockContext.Provider value={{ currentDateTime }}>
       {children}
     </ClockContext.Provider>
   );
